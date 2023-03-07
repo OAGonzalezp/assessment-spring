@@ -1,12 +1,12 @@
 package com.credibanco.assessment.card.model;
 
 import com.credibanco.assessment.card.dto.enums.TransactionStatus;
-import com.credibanco.assessment.card.model.CardEntity;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -19,6 +19,7 @@ public class TransactionEntity implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
     private String referenceNumber;
+    private Date date;
     @ManyToOne
     private CardEntity card;
     private Double buyAmount;

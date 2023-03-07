@@ -20,7 +20,6 @@ public class CardEntity implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
     private String pan;
-    private String hashIdentifier;
     private String customerName;
     private String customerId;
     private String customerPhone;

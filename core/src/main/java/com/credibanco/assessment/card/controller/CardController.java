@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -46,10 +45,10 @@ public class CardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/card/{hashIdentifier}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CardResponse> getCard(@PathVariable String hashIdentifier){
+    @GetMapping(value = "/card/{pan}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CardResponse> getCard(@PathVariable String pan){
 
-        CardResponse response = iCardService.consult(hashIdentifier);
+        CardResponse response = iCardService.consult(pan);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

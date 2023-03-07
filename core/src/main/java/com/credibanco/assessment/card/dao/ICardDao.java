@@ -14,7 +14,7 @@ public interface ICardDao {
 
     CardCreationResponse save(CardCreationRequest request);
     CardValidationResponse validate(CardValidationRequest request);
-    CardResponse consult(String hashIdentifier);
+    CardResponse consult(String pan);
 
     List<CardResponse> findAll();
     BaseResponse deleteCard(CardDeleteRequest request);

@@ -13,7 +13,7 @@ import java.util.List;
 public interface ICardService {
     CardCreationResponse save(CardCreationRequest request);
     CardValidationResponse validate(CardValidationRequest request);
-    CardResponse consult(String hashIdentifier);
+    CardResponse consult(String pan);
     List<CardResponse> findAll();
     BaseResponse deleteCard(CardDeleteRequest request);
 }

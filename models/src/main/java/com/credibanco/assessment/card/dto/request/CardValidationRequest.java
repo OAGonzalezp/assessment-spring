@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class CardValidationRequest {
     private Integer validationCode;
-    private String hashIdentifier;
+    private String pan;
 }

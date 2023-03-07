@@ -35,7 +35,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionsResponse findAll(String hashIdentifier) {
-        return transactionDao.findAll(hashIdentifier);
+    public TransactionsResponse findAll(String pan) {
+        return transactionDao.findAll(pan);
     }
 }

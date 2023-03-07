@@ -2,9 +2,7 @@ package com.credibanco.assessment.card.advice;
 
 import com.credibanco.assessment.card.dto.enums.ResponseCodes;
 import com.credibanco.assessment.card.dto.response.DataResponse;
-import com.credibanco.assessment.card.exceptions.CardNotFoundException;
-import com.credibanco.assessment.card.exceptions.CardNotVerifiedException;
-import com.credibanco.assessment.card.exceptions.InvalidVerificationCodeException;
+import com.credibanco.assessment.card.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +50,20 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(CardNotVerifiedException.class)
     @ResponseBody
-    public ResponseEntity<DataResponse> processCardNotVerifiedExceptionException(final Exception ex) {
+    public ResponseEntity<DataResponse> processCardNotVerifiedException(final Exception ex) {
         return new ResponseEntity(ResponseCodes.CARD_NOT_VERIFIED, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TransactionNotCanceledException.class)
+    @ResponseBody
+    public ResponseEntity<DataResponse> processTransactionNotCanceledException(final Exception ex) {
+        return new ResponseEntity(ResponseCodes.PURCHASE_NOT_CANCELED, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<DataResponse> processTransactionNotFoundException(final Exception ex) {
+        return new ResponseEntity(ResponseCodes.INVALID_REFERENCE_NUMBER, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

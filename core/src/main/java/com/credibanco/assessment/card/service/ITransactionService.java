@@ -13,5 +13,5 @@ public interface ITransactionService {
     TransactionCreationResponse save(TransactionCreationRequest request);
     List<TransactionEntity> findAll();
     TransactionCancelResponse cancelTransaction(TransactionCancelRequest request);
-    TransactionsResponse findAll(String hashIdentifier);
+    TransactionsResponse findAll(String pan);
 }

@@ -1,0 +1,31 @@
+###
+POST http://localhost:8080/api/v1/card
+Content-Type: application/json
+
+{
+  "pan": "1233456988122555",
+  "customerName": "Juan",
+  "customerId": "3132131",
+  "customerPhone": "Hernandez",
+  "type": "DEBITO"
+}
+
+###
+PUT http://localhost:8080/api/v1/card
+Content-Type: application/json
+
+{
+  "pan": "1233456988122555",
+  "validationCode": "30"
+}
+
+###
+POST http://localhost:8080/api/v1/transaction
+Content-Type: application/json
+
+{
+  "pan": "1233456988122555",
+  "referenceNumber": "1234",
+  "buyAmount": 1500.20,
+  "buyAddress": "Santa Marta"
+}

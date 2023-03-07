@@ -31,8 +31,8 @@ public class CardServiceImpl implements ICardService {
     }
 
     @Override
-    public CardResponse consult(String hashIdentifier) {
-        return iCardDao.consult(hashIdentifier);
+    public CardResponse consult(String pan) {
+        return iCardDao.consult(pan);
     }
 
     @Override

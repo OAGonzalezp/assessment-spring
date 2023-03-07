@@ -10,7 +10,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CardResponse extends BaseResponse {
     private String pan;
-    private String hashIdentifier;
+    private String maskPan;
     private String customerName;
     private String customerId;
     private String customerPhone;

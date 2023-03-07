@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ICardRepository extends JpaRepository<CardEntity, Long> {
-    CardEntity findByHashIdentifierIs(String hashIdentifier);
+    CardEntity findByPanIs(String pan);
 }

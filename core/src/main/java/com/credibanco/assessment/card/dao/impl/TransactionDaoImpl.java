@@ -1,8 +1,11 @@
-package com.credibanco.assessment.card.dao;
+package com.credibanco.assessment.card.dao.impl;
 
+import com.credibanco.assessment.card.dao.ITransactionDao;
 import com.credibanco.assessment.card.dto.enums.ResponseCodes;
 import com.credibanco.assessment.card.exceptions.CardNotFoundException;
 import com.credibanco.assessment.card.exceptions.CardNotVerifiedException;
+import com.credibanco.assessment.card.exceptions.TransactionNotCanceledException;
+import com.credibanco.assessment.card.exceptions.TransactionNotFoundException;
 import com.credibanco.assessment.card.model.CardEntity;
 import com.credibanco.assessment.card.model.TransactionEntity;
 import com.credibanco.assessment.card.dto.enums.CardStatus;
@@ -18,11 +21,13 @@ import com.credibanco.assessment.card.repository.ITransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TransactionDaoImpl implements ITransactionDao{
+public class TransactionDaoImpl implements ITransactionDao {
 
     @Autowired
     ITransactionRepository repository;
@@ -34,7 +39,7 @@ public class TransactionDaoImpl implements ITransactionDao{
         TransactionCreationResponse response = new TransactionCreationResponse();
         TransactionEntity entity = new TransactionEntity();
 
-        CardEntity card = cardRepository.findByHashIdentifierIs(request.getHashIdentifier());
+        CardEntity card = cardRepository.findByPanIs(request.getPan());
 
         if (card == null) {
             throw new CardNotFoundException();
@@ -48,6 +53,7 @@ public class TransactionDaoImpl implements ITransactionDao{
         entity.setBuyAmount(request.getBuyAmount());
         entity.setBuyAddress(request.getBuyAddress());
         entity.setCard(card);
+        entity.setDate(new Date());
         entity.setStatus(TransactionStatus.APROBADA);
         repository.save(entity);
 
@@ -64,10 +70,10 @@ public class TransactionDaoImpl implements ITransactionDao{
     }
 
     @Override
-    public TransactionsResponse findAll(String hashIdentifier) {
+    public TransactionsResponse findAll(String pan) {
 
         TransactionsResponse response = new TransactionsResponse();
-        CardEntity card = cardRepository.findByHashIdentifierIs(hashIdentifier);
+        CardEntity card = cardRepository.findByPanIs(pan);
 
         if (card == null) {
             throw new CardNotFoundException();
@@ -85,13 +91,23 @@ public class TransactionDaoImpl implements ITransactionDao{
     public TransactionCancelResponse cancelTransaction(TransactionCancelRequest request) {
         TransactionCancelResponse response = new TransactionCancelResponse();
 
-        CardEntity card = cardRepository.findByHashIdentifierIs(request.getHashIdentifier());
+        CardEntity card = cardRepository.findByPanIs(request.getPan());
 
         if (card == null) {
             throw new CardNotFoundException();
         }
 
         TransactionEntity entity = repository.findOneByCardAndReferenceNumberAndBuyAmount(card, request.getReferenceNumber(), request.getBuyAmount());
+
+        if (entity == null) {
+            throw new TransactionNotFoundException();
+        }
+        long diff = new Date().getTime() - entity.getDate().getTime();
+        long diffMinutes = diff / (60 * 1000) % 60;
+
+        if (diffMinutes < 5) {
+            throw new TransactionNotCanceledException();
+        }
 
         entity.setStatus(TransactionStatus.RECHAZADA);
         repository.save(entity);

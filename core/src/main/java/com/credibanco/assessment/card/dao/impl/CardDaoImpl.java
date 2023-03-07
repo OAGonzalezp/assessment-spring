@@ -1,5 +1,6 @@
-package com.credibanco.assessment.card.dao;
+package com.credibanco.assessment.card.dao.impl;
 
+import com.credibanco.assessment.card.dao.ICardDao;
 import com.credibanco.assessment.card.dto.enums.ResponseCodes;
 import com.credibanco.assessment.card.exceptions.CardNotFoundException;
 import com.credibanco.assessment.card.exceptions.InvalidVerificationCodeException;
@@ -23,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class CardDaoImpl implements ICardDao{
+public class CardDaoImpl implements ICardDao {
 
     @Autowired
     ICardRepository cardRepository;
@@ -40,12 +41,10 @@ public class CardDaoImpl implements ICardDao{
         entity.setStatus(CardStatus.CREADA);
 
         entity.setValidationCode(getCode());
-        entity.setHashIdentifier(getSHA256(request.getPan()));
 
         cardRepository.save(entity);
 
         response.setResponseCode(ResponseCodes.SUCCESS);
-        response.setHashIdentifier(entity.getHashIdentifier());
         response.setValidationCode(entity.getValidationCode());
         response.setPan(maskPan(entity.getPan()));
 
@@ -56,7 +55,7 @@ public class CardDaoImpl implements ICardDao{
     public CardValidationResponse validate(CardValidationRequest request) {
         CardValidationResponse response = new CardValidationResponse();
 
-        CardEntity entity = cardRepository.findByHashIdentifierIs(request.getHashIdentifier());
+        CardEntity entity = cardRepository.findByPanIs(request.getPan());
 
         if (entity == null) {
             throw new CardNotFoundException();
@@ -64,6 +63,7 @@ public class CardDaoImpl implements ICardDao{
             throw new InvalidVerificationCodeException();
         } else {
             response.setResponseCode(ResponseCodes.SUCCESS);
+            response.setPan(maskPan(entity.getPan()));
             entity.setStatus(CardStatus.ENROLADA);
             cardRepository.save(entity);
         }
@@ -72,10 +72,10 @@ public class CardDaoImpl implements ICardDao{
     }
 
     @Override
-    public CardResponse consult(String hashIdentifier) {
+    public CardResponse consult(String pan) {
         CardResponse response = new CardResponse();
 
-        CardEntity entity = cardRepository.findByHashIdentifierIs(hashIdentifier);
+        CardEntity entity = cardRepository.findByPanIs(pan);
 
         if (entity == null) {
             throw new CardNotFoundException();
@@ -100,8 +100,8 @@ public class CardDaoImpl implements ICardDao{
             card.setCustomerPhone(x.getCustomerPhone());
             card.setCustomerName(x.getCustomerName());
             card.setCustomerId(x.getCustomerId());
-            card.setPan(maskPan(x.getPan()));
-            card.setHashIdentifier(x.getHashIdentifier());
+            card.setPan(x.getPan());
+            card.setMaskPan(maskPan(x.getPan()));
             card.setType(x.getType());
             cardsList.add(card);
         });
@@ -113,7 +113,7 @@ public class CardDaoImpl implements ICardDao{
     public BaseResponse deleteCard(CardDeleteRequest request) {
         BaseResponse response = new BaseResponse();
 
-        CardEntity entity = cardRepository.findByHashIdentifierIs(request.getHashIdentifier());
+        CardEntity entity = cardRepository.findByPanIs(request.getPan());
 
         if (entity == null) {
             throw new CardNotFoundException();
@@ -129,24 +129,6 @@ public class CardDaoImpl implements ICardDao{
     private int  getCode() {
         Random rn = new Random();
         return rn.nextInt(100) + 1;
-    }
-
-    private String getSHA256(String input){
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-ddHHmmss");
-
-        input = input + format.format(new Date());
-
-        String toReturn = null;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.reset();
-            digest.update(input.getBytes("utf8"));
-            toReturn = String.format("%064x", new BigInteger(1, digest.digest()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return toReturn;
     }
 
     private String maskPan(String pan) {

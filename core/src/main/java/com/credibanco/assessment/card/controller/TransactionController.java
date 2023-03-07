@@ -38,12 +38,12 @@ public class TransactionController {
         }
     }
 
-    @GetMapping(value = "/transaction/{hashIdentifier}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionsResponse> getTransaction(@PathVariable String hashIdentifier){
+    @GetMapping(value = "/transaction/{pan}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TransactionsResponse> getTransaction(@PathVariable String pan){
 
         BaseResponse response = new BaseResponse();
         try {
-            return new ResponseEntity<>(transactionService.findAll(hashIdentifier), HttpStatus.OK);
+            return new ResponseEntity<>(transactionService.findAll(pan), HttpStatus.OK);
         } catch (Exception exception) {
             response.setCode("01");
             response.setMessage("Fallido");

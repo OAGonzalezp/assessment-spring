@@ -10,5 +10,4 @@ import lombok.Setter;
 public class CardCreationResponse extends BaseResponse {
     private Integer validationCode;
     private String pan;
-    private String hashIdentifier;
 }
